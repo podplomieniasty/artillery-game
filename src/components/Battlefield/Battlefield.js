@@ -1,33 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Tile from '../Tile/Tile';
 import styles from './Battlefield.module.scss'
 
-const difficulty = {
-    easy: 10,
-    medium: 15,
-    hard: 30,
-}
-
-const Battlefield = () => {
-
-    const currentDiff = difficulty.easy;
-    
-    const fields = [];
-
-    for(let i = 0; i < currentDiff*10; i++)
-    {
-        fields.push(
-            (<li 
-                className={styles.li}
-                key={i}>
-                X
-            </li>)
-        )
-    }
 
 
+const Battlefield = ({ onShot, tiles, isHit}) => {
     return(
         <div className={styles.wrapper}>
-            {fields}
+            {isHit &&
+                <div className={styles.winMessage}><h1>You won!</h1></div> }
+            
+            {
+                tiles.map((tile, index) => (
+                    <Tile onShot={onShot} key={index} {...tile}/>
+                ))
+            }
+
+
         </div>
     )
 }

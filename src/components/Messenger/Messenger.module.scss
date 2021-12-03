@@ -1,7 +1,7 @@
 .wrapper {
     border: 4px solid darkslategray;
     width: 500px;
-    height: 500px;
+    height: 250px;
     background-color: black;
 }
 
@@ -11,11 +11,35 @@
     border-bottom: 4px solid darkslategray;
     font-size: 15pt;
     color: whitesmoke;
+}
 
+.console {
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+    height: 192px;
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+        width: 10px;
+        height: auto;
+        background-color: darkslategray;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: gray;
+        border-radius: 5%;
+
+        &:hover {
+            background-color: lightgray;
+        }
+    }
 }
 
 .message {
-    padding: 10px 10px;
+    padding: 5px 10px 0 10px;
     color: green;
     white-space: pre-wrap;
 

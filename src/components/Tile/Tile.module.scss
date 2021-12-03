@@ -1,0 +1,29 @@
+.tile {
+    flex: 1 0 9%;
+    height: 46px;
+    list-style: none;
+    border: 2px solid black;
+    
+}
+
+.tile:hover {
+    border: 2px dashed red;
+
+    &::before, &::after {
+        content: '';
+        position: absolute;
+        width: 3px;
+        height: 30px;
+        background-color: red;
+        
+    }
+
+    &::before {
+        transform: translate(21px, 10px) rotate(45deg);
+    }
+
+    &::after {
+        transform: translate(21px, 10px) rotate(-45deg);
+    }
+    
+}
