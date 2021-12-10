@@ -1,24 +1,30 @@
-import Header from "./components/Header/Header";
-import Battlefield from "./components/Battlefield/Battlefield";
-import Messenger from "./components/Messenger/Messenger";
-import { useState } from "react";
-import styles from './App.module.scss';
+import GameView from './views/GameView/GameView'
+import TitleView from './views/TitleView/TitleView';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useState } from 'react';
 
 const msgArray = [
     "Come in soldier, this is the HQ speaking. There's an enemy base hidden somewhere around. Navigate the artillery cannon, locate the base and destroy it, over and out.",
 ];
 
 const App = () => {
-	const [isGameOn, setGameState] = useState(false);
 	const [messages, setMessages] = useState(msgArray); // messages to display
-	const [baseLocation] = useState([5,5]);
+	const [baseLocation, setBaseLocation] = useState([]);
 	const [tileboard, setTileboard] = useState([]);
 	const [isGameOver, setGameStatus] = useState(false);
+	const [shots, setShots] = useState(0);
 
 	const difficulty = 10;
 
 	const startGame = () => {
 		const tiles = [];
+
+		console.log(tiles);
+		
+		const base = [
+			Math.floor(Math.random() * 10),
+			Math.floor(Math.random() * 10),
+		]
 		
 		for(let i = 0; i < difficulty*10; i++)
     	{
@@ -29,14 +35,13 @@ const App = () => {
 
 			tiles.push(tile);
     	}	
+		setBaseLocation(base);
 		setTileboard(tiles);
-		console.log(tiles);
-		setGameState(true);
 	}
 
 	const randGreenHex = () => {
 		let hex = "#00";
-		let num = Math.floor(Math.random() * 127) + 128;
+		let num = Math.floor(Math.random() * 127) + 128 ;
 
 		num = num.toString(16);
 		hex += num.length === 1 ? "0" + num : num;
@@ -45,7 +50,7 @@ const App = () => {
 		return hex;
 	};
 
-	
+
 	const retrieveMessage = (shotStats) => {
 		const msg = shotStats.isHit ? 
 			`Good job, soldier. The hidden base located at X:${shotStats.shotX} &  Y:${shotStats.shotY} has been destroyed. Your training is complete.`
@@ -65,10 +70,9 @@ const App = () => {
 		const trgt = e.currentTarget;
 		const elements = Array.from(e.currentTarget.parentElement.children);
 		const trgtIndex = elements.findIndex(x => x === e.currentTarget);
-		trgt.style.backgroundColor = 'red';
-		console.log(trgt);
+		trgt.style.backgroundColor = 'orangered';
 
-		const coords = [Math.floor(trgtIndex/10), trgtIndex%10];
+		const coords = [trgtIndex%10, Math.floor(trgtIndex/10)];
 		
 		const cX = (baseLocation[0] - coords[0])*(baseLocation[0] - coords[0]);
         const cY = (baseLocation[1] - coords[1])*(baseLocation[1] - coords[1]);
@@ -84,23 +88,25 @@ const App = () => {
         }
         retrieveMessage(shotStats);
 		setGameStatus(isHit);
+		setShots(shots + 1);
+	}
 
+	const gameSettings = {
+		difficulty: difficulty,
+		tiles: tileboard,
+		onShot: returnTile,
+		isHit: isGameOver,
+		shots: shots,
+		onRestart: startGame,
 	}
 
   	return(
-		  <div className={styles.wrapper}>
-			<Header />
-		  	{!isGameOn ? (
-				  <button className={styles.startGameBtn} onClick={startGame}>Start game</button>
-			  ) : (
-				<>
-					<Battlefield difficulty={10} tiles={tileboard} onShot={returnTile} isHit={isGameOver}/>
-					<Messenger messages={messages}/>
-				</>
-			  )}
-			
-		  </div>
-		  
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" exact element={<TitleView onPlay={startGame}/>}/>
+				<Route path="/game" element={<GameView messages={messages} gameSettings={gameSettings}/>}/>
+			</Routes>
+		</BrowserRouter>
 	  )
 };
 
